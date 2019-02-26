@@ -20,13 +20,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class test
  */
 @WebServlet("/geobasis_sg")
-public class geobasis_sg extends HttpServlet {
+public class Geobasis_SG extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public geobasis_sg() {
+	public Geobasis_SG() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

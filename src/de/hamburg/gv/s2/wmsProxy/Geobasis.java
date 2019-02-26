@@ -19,14 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class test
  */
-@WebServlet("/alkis")
-public class alkis extends HttpServlet {
+@WebServlet("/geobasis")
+public class Geobasis extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public alkis() {
+	public Geobasis() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -37,8 +37,8 @@ public class alkis extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String wfs_url = "http://geodienste.hamburg.de/HH_WMS_ALKIS_Basiskarte";
-		String layer = "0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21%2C23%2C24%2C26%2C27%2C28%2C29%2C30%2C32%2C33%2C34%2C35%2C36%2C37";
+		String wfs_url = "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten";
+		String layer = "56%2C10%2C18%2C26%2C14%2C2%2C22%2C30";
 
 		String req = "";
 		if (request.getQueryString() != null) {
