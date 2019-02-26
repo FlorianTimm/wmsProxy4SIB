@@ -65,7 +65,7 @@ public class geobasis_sg extends HttpServlet {
 		String req = "";
 		if (request.getQueryString() != null) {
 			req = "?" + request.getQueryString();
-			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=1%2C5%2C9%2C13");
+			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=5%2C29%2C25%2C9%2C21%2C17%2C13%2C1");
 		}
 		String urlS = "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten_SG" + req;
 

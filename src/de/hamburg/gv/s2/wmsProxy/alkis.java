@@ -41,7 +41,7 @@ public class alkis extends HttpServlet {
 		String req = "";
 		if (request.getQueryString() != null) {
 			req = "?" + request.getQueryString();
-			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C20%2C21%2C23%2C24%2C25%2C26%2C28%2C29%2C30%2C31%2C32");
+			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21%2C23%2C24%2C26%2C27%2C28%2C29%2C30%2C32%2C33%2C34%2C35%2C36%2C37");
 		}
 		
 		String urlS = "http://geodienste.hamburg.de/HH_WMS_ALKIS_Basiskarte" + req;
