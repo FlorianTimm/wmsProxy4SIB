@@ -37,15 +37,17 @@ public class alkis extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String wfs_url = "http://geodienste.hamburg.de/HH_WMS_ALKIS_Basiskarte";
+		String layer = "0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21%2C23%2C24%2C26%2C27%2C28%2C29%2C30%2C32%2C33%2C34%2C35%2C36%2C37";
 
 		String req = "";
 		if (request.getQueryString() != null) {
 			req = "?" + request.getQueryString();
-			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=0%2C1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C9%2C10%2C11%2C12%2C13%2C14%2C15%2C16%2C17%2C18%2C19%2C20%2C21%2C23%2C24%2C26%2C27%2C28%2C29%2C30%2C32%2C33%2C34%2C35%2C36%2C37");
+			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=" + layer);
 		}
-		
-		String urlS = "http://geodienste.hamburg.de/HH_WMS_ALKIS_Basiskarte" + req;
-		//response.getWriter().append(urlS);
+
+		String urlS = wfs_url + req;
+		// response.getWriter().append(urlS);
 		// response.getWriter().append(url.toString());
 		if (urlS.lastIndexOf("GetCapabilities") == -1) {
 			response.sendRedirect(urlS);
@@ -53,7 +55,7 @@ public class alkis extends HttpServlet {
 			URL url = new URL(urlS);
 			try {
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				//connection.setRequestMethod("HEAD");
+				// connection.setRequestMethod("HEAD");
 
 				boolean zugriffMoeglich = false;
 				try {
@@ -92,16 +94,26 @@ public class alkis extends HttpServlet {
 						BufferedReader br = new BufferedReader(isr);
 
 						String inputLine;
+						while ((inputLine = br.readLine()) != null) {
+							inputLine = inputLine.replaceAll(wfs_url, request.getRequestURL().toString());
 
-						while ((inputLine = br.readLine()) != null)
-							response.getWriter()
-									.append((inputLine.replaceAll("http://geodienste.hamburg.de/HH_WMS_ALKIS_Basiskarte",
-											request.getRequestURL().toString())) + "\n");
+							String minScale1 = "(?<=<MinScaleDenominator xmlns=\"http:\\/\\/www.opengis.net\\/wms\">)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
+							String minScale2 = "(?<=<MinScaleDenominator>)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
+							String maxScale1 = "(?<=<MaxScaleDenominator xmlns=\"http:\\/\\/www.opengis.net\\/wms\">)(\\d+\\.\\d*)(?=<\\/MaxScaleDenominator>)";
+							String maxScale2 = "(?<=<MaxScaleDenominator>)(\\d+\\.\\d*)(?=<\\/MaxScaleDenominator>)";
+							inputLine = inputLine.replaceAll(minScale1, "9.449405");
+							inputLine = inputLine.replaceAll(minScale2, "9.449405");
+							inputLine = inputLine.replaceAll(maxScale1, "28349.159226");
+							inputLine = inputLine.replaceAll(maxScale2, "28349.159226");
+
+							response.getWriter().append(inputLine + "\n");
+						}
 						br.close();
 
 					}
 				} else if (zugriffMoeglich) {
-					response.getWriter().append("Fehler " + connection.getResponseCode() + "\n<br>" + url.getPath());
+					response.getWriter().append("Fehler " + connection.getResponseCode() + ' '
+							+ connection.getResponseMessage() + "\n" + url.toString());
 				} else {
 					response.getWriter().append("Fehler\n<br>Server antwortete nicht!\n<br>" + url.getPath());
 				}

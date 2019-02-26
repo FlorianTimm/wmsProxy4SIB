@@ -37,38 +37,17 @@ public class geobasis extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// response.setHeader("Content-Type", "text/xml");
-		// TODO Auto-generated method stub
-		// response.getWriter().append("Served at:
-		// ").append(request.getContextPath()).append(request.getQueryString()).append(request.getQueryString()).append(request.getQueryString());
+		String wfs_url = "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten";
+		String layer = "56%2C10%2C18%2C26%2C14%2C2%2C22%2C30";
 
-		/*
-		 * String[] parameterP = request.getQueryString().split("&");
-		 * Map<String, String> parameter = new HashMap<String, String>(); //
-		 * response.getWriter().append("Parameter: " + parameterP.length);
-		 * 
-		 * for (int i = 0; i < parameterP.length; i++) { //
-		 * response.getWriter().append(parameterP[i]+"\n");
-		 * 
-		 * String[] paar = parameterP[i].split("="); if (paar.length == 2) {
-		 * parameter.put(paar[0], paar[1]); //
-		 * response.getWriter().append("Parameter"); } else if (paar.length ==
-		 * 1) { parameter.put(paar[0], ""); } } String urlS = ""; for
-		 * (Map.Entry<String, String> eintrag : parameter.entrySet()) { String
-		 * key = eintrag.getKey(); String wert = eintrag.getValue(); if
-		 * (urlS.equals("")) { urlS += "?"; } else { urlS += "&"; }
-		 * 
-		 * urlS += key + "=" + wert;
-		 * 
-		 * }
-		 */
 		String req = "";
 		if (request.getQueryString() != null) {
 			req = "?" + request.getQueryString();
-			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=6%2C10%2C18%2C26%2C14%2C2%2C22%2C30");
+			req = req.replaceAll("(LAYERS=(\\d*%2C*)*\\d?)", "LAYERS=" + layer);
 		}
-		String urlS = "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten" + req;
 
+		String urlS = wfs_url + req;
+		// response.getWriter().append(urlS);
 		// response.getWriter().append(url.toString());
 		if (urlS.lastIndexOf("GetCapabilities") == -1) {
 			response.sendRedirect(urlS);
@@ -76,7 +55,7 @@ public class geobasis extends HttpServlet {
 			URL url = new URL(urlS);
 			try {
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				connection.setRequestMethod("HEAD");
+				// connection.setRequestMethod("HEAD");
 
 				boolean zugriffMoeglich = false;
 				try {
@@ -94,12 +73,6 @@ public class geobasis extends HttpServlet {
 					response.setContentType(contentType);
 					if (typ.length == 2 && typ[0].equals("image")) {
 
-						// response.getWriter().append(contentType + "\n<br>" +
-						// url.getQuery());
-						// URL imgUrl = new URL(
-						// "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=false&t=43&zufall=0.8169354975319985&LAYERS=1%2C5%2C9%2C13&WIDTH=512&HEIGHT=512&CRS=EPSG%3A25832&STYLES=&BBOX=566074.6000983826%2C5933629.266033529%2C567429.2660335296%2C5934983.931968676");
-						// Proxy proxy = new Proxy(Proxy.Type.HTTP, new
-						// InetSocketAddress("wall.lit.hamburg.de", 80));
 						URLConnection con = url.openConnection();
 						InputStream is = con.getInputStream();
 
@@ -112,10 +85,7 @@ public class geobasis extends HttpServlet {
 						ImageIO.write(bi, typ[1], out);
 						out.close();
 					} else if (typ.length == 2) {
-						// response.getWriter().append("WMS?");
 
-						// Proxy proxy = new Proxy(Proxy.Type.HTTP, new
-						// InetSocketAddress("wall.lit.hamburg.de", 80));
 						URLConnection con = url.openConnection();
 						InputStream is = con.getInputStream();
 
@@ -124,18 +94,26 @@ public class geobasis extends HttpServlet {
 						BufferedReader br = new BufferedReader(isr);
 
 						String inputLine;
-						// response.setHeader("Content-Type", "text/xml");
-						// response.getWriter().append("Hallo" +
-						// url.toString());
-						while ((inputLine = br.readLine()) != null)
-							response.getWriter()
-									.append((inputLine.replaceAll("http://geodienste.hamburg.de/HH_WMS_Geobasisdaten",
-											request.getRequestURL().toString())) + "\n");
+						while ((inputLine = br.readLine()) != null) {
+							inputLine = inputLine.replaceAll(wfs_url, request.getRequestURL().toString());
+
+							String minScale1 = "(?<=<MinScaleDenominator xmlns=\"http:\\/\\/www.opengis.net\\/wms\">)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
+							String minScale2 = "(?<=<MinScaleDenominator>)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
+							String maxScale1 = "(?<=<MaxScaleDenominator xmlns=\"http:\\/\\/www.opengis.net\\/wms\">)(\\d+\\.\\d*)(?=<\\/MaxScaleDenominator>)";
+							String maxScale2 = "(?<=<MaxScaleDenominator>)(\\d+\\.\\d*)(?=<\\/MaxScaleDenominator>)";
+							inputLine = inputLine.replaceAll(minScale1, "9.449405");
+							inputLine = inputLine.replaceAll(minScale2, "9.449405");
+							inputLine = inputLine.replaceAll(maxScale1, "28349.159226");
+							inputLine = inputLine.replaceAll(maxScale2, "28349.159226");
+
+							response.getWriter().append(inputLine + "\n");
+						}
 						br.close();
 
 					}
 				} else if (zugriffMoeglich) {
-					response.getWriter().append("Fehler " + connection.getResponseCode() + "\n<br>" + url.getPath());
+					response.getWriter().append("Fehler " + connection.getResponseCode() + ' '
+							+ connection.getResponseMessage() + "\n" + url.toString());
 				} else {
 					response.getWriter().append("Fehler\n<br>Server antwortete nicht!\n<br>" + url.getPath());
 				}
