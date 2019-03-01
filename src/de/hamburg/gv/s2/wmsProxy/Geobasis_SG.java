@@ -38,6 +38,7 @@ public class Geobasis_SG extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String wfs_url = "http://geodienste.hamburg.de/HH_WMS_Geobasisdaten_SG";
+		String wfs_url_regex = "http(s)?:\\/\\/geodienste\\.hamburg\\.de\\/HH_WMS_Geobasisdaten_SG";
 		String layer = "5%2C29%2C25%2C9%2C21%2C17%2C13%2C1";
 
 		String req = "";
@@ -95,7 +96,7 @@ public class Geobasis_SG extends HttpServlet {
 
 						String inputLine;
 						while ((inputLine = br.readLine()) != null) {
-							inputLine = inputLine.replaceAll(wfs_url, request.getRequestURL().toString());
+							inputLine = inputLine.replaceAll(wfs_url_regex, request.getRequestURL().toString());
 
 							String minScale1 = "(?<=<MinScaleDenominator xmlns=\"http:\\/\\/www.opengis.net\\/wms\">)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
 							String minScale2 = "(?<=<MinScaleDenominator>)(\\d+\\.\\d*)(?=<\\/MinScaleDenominator>)";
