@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>1080</w>
+      <h>910</h>
+    </coordinates>
+    <panel_attributes>title=Aufruf eines Hintergrund-Dienstes in INFOSYS
+desc=Aufrufe von Hintergrund-Karten in INFOSYS werden immer über den Service-Provider abgewickelt. Der Service-Provider kann jedoch nur einen Layer pro Dienst verarbeiten. Daher werden Dienste, wie ALKIS, die mehrere Layer gleichzeitig anzeigen (Flurstücke, Tatsächliche Nutzung,...), über den WMS-Proxy geleitet, so dass der Dienst für den Service-Provider wie ein Layer erscheint. Hierfür ersetzt der Proxy die Parameter in der aufgerufenen URL und leitet die Abfrage an den WMS weiter.
+obj=:Browser~a
+obj=_INFOSYS :GlassFish-Servlet_~b
+obj=_Service-Provider :TomCat-Servlet_~c
+obj=_WMS-Proxy :TomCat-Servlet_~d
+obj=_ALKIS :WMS-Dienst_~e
+obj=_DOP :WMS-Dienst_~f
+
+
+on=a
+
+a-&gt;b : aufruf(); on=b
+a&lt;.b : HTML, CSS...
+a&lt;.b : openLayers; on=a
+
+//combinedFragment=Zugriffe aktuell nicht möglich~alt1 e f; d:';
+a-&gt;c : kartenAufruf (layer1); on=c
+c-&gt;&gt;&gt;f : kartenbildAufruf\n(layer1); on=f;
+c&lt;.f : Kartenbild : jpeg; off=f
+a&lt;.c : Kartenbild : jpeg; off=c
+
+
+a-&gt;c : kartenAufruf (layer1); on=c
+c-&gt;&gt;&gt;d : kartenbildAufruf\n(layer1); on=d
+c&lt;.d : HTTP-Redirect\n(layer1, layer2, layerX...); off=d;
+
+
+c-&gt;&gt;&gt;e : kartenbildAufruf\n(layer1, layer2, layerX...); on=e
+c&lt;.e : Kartenbild : jpeg; off=e
+
+a&lt;.c : Kartenbild : jpeg; off=c
+
+//--</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
